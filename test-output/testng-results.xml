@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results ignored="0" total="1" passed="1" failed="0" skipped="0">
+  <reporter-output>
+  </reporter-output>
+  <suite started-at="2021-04-15T18:02:57 IST" name="Default suite" finished-at="2021-04-15T18:03:45 IST" duration-ms="48663">
+    <groups>
+    </groups>
+    <test started-at="2021-04-15T18:02:57 IST" name="Default test" finished-at="2021-04-15T18:03:45 IST" duration-ms="48663">
+      <class name="test.Mikado.NewListingCheck">
+        <test-method signature="checkNewAgentList()[pri:0, instance:test.Mikado.NewListingCheck@1eb5174b]" started-at="2021-04-15T18:02:57 IST" name="checkNewAgentList" finished-at="2021-04-15T18:03:45 IST" duration-ms="48580" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- checkNewAgentList -->
+      </class> <!-- test.Mikado.NewListingCheck -->
+    </test> <!-- Default test -->
+  </suite> <!-- Default suite -->
+</testng-results>
