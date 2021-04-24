@@ -147,7 +147,7 @@ public class AllHomesPage {
 				}
 
 				int count = 0;
-				
+
 				// Iterating the values in All Homes and comparing it with Input Excel
 				for (int i = 0; i < agentHomeUrl.size(); i++) {
 					for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
@@ -175,11 +175,11 @@ public class AllHomesPage {
 						cell = row.createCell(6);
 						cell.setCellValue(agenturls.get(st));
 						System.out.println("Newly created" + agentHomeUrl.get(i));
-						
+
 					}
 					count = 0;
 				}
-								
+
 				// Updating the Excel Sheet with the changes
 				FileOutputStream out = new FileOutputStream(new File(filePath));
 				workbook.write(out);
@@ -192,4 +192,135 @@ public class AllHomesPage {
 		return driver;
 	}
 
+	/************************************************************************************************************************
+	 * checkActiveListingInfo - Checks whether Active Listing has updated Info in
+	 * Listing sheet and updates the details if not
+	 * 
+	 ************************************************************************************************************************/
+	public static WebDriver checkActiveListingInfo() {
+		try {
+			// Defining the Input Excel File
+			String filePath = System.getProperty("user.dir")
+					+ "\\src\\main\\resources\\InputTestdata\\Listing details.xlsx";
+			FileInputStream file = new FileInputStream(new File(filePath));
+			ZipSecureFile.setMinInflateRatio(-1.0d);
+			XSSFWorkbook workbook = new XSSFWorkbook(file);
+			CellStyle style = workbook.createCellStyle();
+			style.setFillBackgroundColor(IndexedColors.RED1.getIndex());
+			style.setFillPattern(FillPatternType.FINE_DOTS);
+			XSSFSheet sheet = workbook.getSheetAt(0);
+			XSSFRow row = sheet.getRow(0);
+			XSSFCell cell = row.getCell(3);
+
+			// Fetch the details of Listing Sheet
+			XSSFSheet sheet1 = workbook.getSheetAt(1);
+			XSSFRow row1 = sheet1.getRow(0);
+			XSSFCell cell1 = row1.getCell(3);
+			String homePath = System.getProperty("user.dir");
+			System.setProperty("webdriver.chrome.driver", homePath + "\\Drivers\\chromedriver.exe");
+			driver = new ChromeDriver();
+			driver.manage().deleteAllCookies();
+			driver.manage().window().maximize();
+			driver.manage().timeouts().implicitlyWait(10,TimeUnit.SECONDS);
+			FluentWait wait = new FluentWait<WebDriver>(driver).withTimeout(25, TimeUnit.SECONDS)
+					.pollingEvery(3, TimeUnit.SECONDS).ignoring(Exception.class);
+
+			for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+				row = sheet.getRow(i);
+				cell = row.getCell(3);
+				String status = cell.getStringCellValue();
+				if (status.equalsIgnoreCase("Active")) {
+					cell = row.getCell(0);
+					double property_ID = cell.getNumericCellValue();
+					String propertyID = String.valueOf(property_ID);
+					cell = row.getCell(1);
+					String url = cell.getStringCellValue().trim();
+					driver.get(url);
+					if (driver.findElements(By.xpath("//div[@data-testid='badges']/span")).size() > 0) {
+						String propertyStatus = driver.findElement(By.xpath("//div[@data-testid='badges']/span")).getText().trim();
+						String propertyType = driver
+								.findElement(By.xpath("//div[@data-testid='feature-icons']/span[1]")).getText().trim();
+						for (int j = 1; j <= sheet1.getLastRowNum(); j++) {
+							row1 = sheet1.getRow(j);
+							cell1 = row1.getCell(0);
+							double expproperty_ID = cell1.getNumericCellValue();
+							String expectedPropertyID = String.valueOf(expproperty_ID);
+							if (propertyID.equalsIgnoreCase(expectedPropertyID)) {
+								cell1 = row1.getCell(3);
+								String expectedPropertyType = cell1.getStringCellValue().trim();
+								cell1 = row1.getCell(4);
+								String expectedPropertyStatus = cell1.getStringCellValue().trim();
+								if (!propertyType.equalsIgnoreCase(expectedPropertyType)) {
+									cell1 = row1.getCell(3);
+									cell1.setCellValue(propertyType);
+									cell1.setCellStyle(style);
+									cell1 = row1.createCell(1);
+									cell1.setCellValue("TO BE UPDATED");
+									cell1.setCellStyle(style);
+								}
+								if (!propertyStatus.equalsIgnoreCase(expectedPropertyStatus)) {
+									cell1 = row1.getCell(4);
+									cell1.setCellValue(propertyStatus);
+									cell1.setCellStyle(style);
+									cell1 = row1.createCell(1);
+									cell1.setCellValue("TO BE UPDATED");
+									cell1.setCellStyle(style);
+								}
+							}
+						}
+					}
+
+					else {
+						String propertyStatus = "Sale";
+						String propertyType = driver
+								.findElement(By.xpath("//div[@data-testid='feature-icons']/span[1]")).getText().trim();
+						for (int j = 1; j <= sheet1.getLastRowNum(); j++) {
+							row1 = sheet1.getRow(j);
+							cell1 = row1.getCell(0);
+							double expPropertyID = cell1.getNumericCellValue();
+							String expectedPropertyID = String.valueOf(expPropertyID);
+							if (propertyID.equalsIgnoreCase(expectedPropertyID)) {
+								cell1 = row1.getCell(3);
+								String expectedPropertyType = cell1.getStringCellValue().trim();
+								cell1 = row1.getCell(4);
+								String expectedPropertyStatus = cell1.getStringCellValue().trim();
+								if (!propertyType.equalsIgnoreCase(expectedPropertyType)) {
+									cell1 = row1.getCell(3);
+									cell1.setCellValue(propertyType);
+									cell1.setCellStyle(style);
+									cell1 = row1.createCell(1);
+									cell1.setCellValue("TO BE UPDATED");
+									cell1.setCellStyle(style);
+								}
+
+								if (!propertyStatus.equalsIgnoreCase(expectedPropertyStatus)) {
+									cell1 = row1.getCell(4);
+									cell1.setCellValue(propertyStatus);
+									cell1.setCellStyle(style);
+									cell1 = row1.createCell(1);
+									cell1.setCellValue("TO BE UPDATED");
+									cell1.setCellStyle(style);
+								}
+							}
+						}
+					}
+				}
+
+				else {
+					continue;
+				}
+
+				// Updating the Excel Sheet with the changes
+				FileOutputStream out = new FileOutputStream(new File(filePath));
+				workbook.write(out);
+				out.close();
+
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return driver;
+
+	}
 }
