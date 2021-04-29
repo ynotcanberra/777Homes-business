@@ -5,6 +5,8 @@
     <classes>
       <class name="test.Mikado.NewListingCheck"/>
       <class name="test.Mikado.CheckActiveListingInfo"/>
+      <class name="test.Mikado.UpdateNewListing"/>
     </classes>
   </test> <!-- Test -->
 </suite> <!-- Suite -->
+
