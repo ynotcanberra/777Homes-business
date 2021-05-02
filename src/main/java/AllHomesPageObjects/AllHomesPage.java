@@ -410,7 +410,24 @@ public class AllHomesPage {
 					wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(prop_Type)));
 					wait.until(ExpectedConditions.elementToBeClickable(By.xpath(prop_Type)));
 					String propType = driver.findElement(By.xpath(prop_Type)).getText().trim();
-
+					
+					if(propType.contains("House"))
+					{
+						propType = "House";
+					}
+					else if(propType.contains("Apartment"))
+					{
+						propType = "Apartment";
+					}
+					else if(propType.contains("Townhouse"))
+					{
+						propType = "Town house";
+					}
+					else if(propType.contains("Land")||propType.contains("Other"))
+					{
+						propType = "Others";
+					}
+					
 					// Fetching the Property Status
 					String propStatus = "";
 					if (driver.findElements(By.xpath("//div[@data-testid='badges']/span")).size() > 0) {
@@ -521,7 +538,7 @@ public class AllHomesPage {
 								.elementToBeClickable(By.xpath("//span[contains(text(),'size')]/following::span[1]")));
 						List<WebElement> element = driver
 								.findElements(By.xpath("//span[contains(text(),'size')]/following::span[1]"));
-						size = "Block/House:";
+						size = "Block/House: ";
 						for (int j = 0; j < element.size(); j++) {
 
 							if (element.size() == 1) {
