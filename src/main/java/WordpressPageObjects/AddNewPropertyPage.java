@@ -270,6 +270,7 @@ public class AddNewPropertyPage {
 							if (cell != null) {
 								// Found column and there is value in the cell.
 								Country = cell.getStringCellValue().trim();
+								Country = Country.toUpperCase();
 							}
 						}
 						if (Country != null)
@@ -356,6 +357,7 @@ public class AddNewPropertyPage {
 							je.executeScript("arguments[0].scrollIntoView(true);",
 									driver.findElement(By.xpath(property_price)));
 						wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(property_price)));
+						driver.findElement(By.xpath(property_price)).clear();
 						driver.findElement(By.xpath(property_price)).sendKeys(Price);
 
 						// Entering Price Label by fetching from Input Excel
@@ -372,8 +374,16 @@ public class AddNewPropertyPage {
 							je.executeScript("arguments[0].scrollIntoView(true);",
 									driver.findElement(By.xpath(price_label)));
 						wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(price_label)));
+						driver.findElement(By.xpath(price_label)).clear();
 						driver.findElement(By.xpath(price_label)).sendKeys(PriceLabel);
-
+						
+						//Selecting the Price label Position
+						je.executeScript("arguments[0].scrollIntoView(true);",
+								driver.findElement(By.xpath("//select[contains(@name,'price_label_position')]")));
+						wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//select[contains(@name,'price_label_position')]")));
+						Select select = new Select(driver.findElement(By.xpath("//select[contains(@name,'price_label_position')]")));
+						select.selectByVisibleText("After Price");
+						
 						// Entering Size by fetching from Input Excel
 						String Size = "";
 						if (row != null) {
@@ -388,6 +398,7 @@ public class AddNewPropertyPage {
 							je.executeScript("arguments[0].scrollIntoView(true);",
 									driver.findElement(By.xpath(property_size)));
 						wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(property_size)));
+						driver.findElement(By.xpath(property_size)).clear();
 						driver.findElement(By.xpath(property_size)).sendKeys(Size);
 
 						// Entering Size Label by fetching from Input Excel
@@ -404,7 +415,15 @@ public class AddNewPropertyPage {
 							je.executeScript("arguments[0].scrollIntoView(true);",
 									driver.findElement(By.xpath(size_label)));
 						wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(size_label)));
+						driver.findElement(By.xpath(size_label)).clear();
 						driver.findElement(By.xpath(size_label)).sendKeys(SizeLabel);
+						
+						//Selecting the Size label Position
+						je.executeScript("arguments[0].scrollIntoView(true);",
+								driver.findElement(By.xpath("//select[contains(@name,'size_label_position')]")));
+						wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//select[contains(@name,'size_label_position')]")));
+					    select = new Select(driver.findElement(By.xpath("//select[contains(@name,'size_label_position')]")));
+						select.selectByVisibleText("After Value");
 
 						// Entering Bedrooms by fetching from Input Excel
 						String Bedrooms = "";
@@ -513,6 +532,7 @@ public class AddNewPropertyPage {
 						wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(property_parking)));
 						driver.findElement(By.xpath(property_parking)).sendKeys(Parking);
 
+						
 						// Entering and Selecting Address details by fetching it from Input Excel
 						String Address = "";
 						if (row != null) {
