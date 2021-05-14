@@ -73,8 +73,9 @@ public class AddNewPropertyPage {
 					String status = cell.getStringCellValue().trim();
 					cell = row.getCell(4);
 					String property_Status = cell.getStringCellValue().trim();
-                  
-					if (status.equalsIgnoreCase("New") && !property_Status.equalsIgnoreCase("Sold")) {
+
+					if (status.equalsIgnoreCase("New") && !property_Status.equalsIgnoreCase("Sold")
+							&& !property_Status.equalsIgnoreCase("Rented")) {
 						wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(mikado_property)));
 						driver.findElement(By.xpath(mikado_property)).click();
 						wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(add_new_property)));
@@ -345,7 +346,8 @@ public class AddNewPropertyPage {
 							try {
 								if (cell != null) {
 									// Found column and there is value in the cell.
-									Price = cell.getStringCellValue();
+									Price = cell.getStringCellValue().trim();
+									Price = Price.replace("\t", "");
 									// Price = String.valueOf(price);
 								}
 							} catch (Exception e) {
@@ -368,6 +370,7 @@ public class AddNewPropertyPage {
 							if (cell != null) {
 								// Found column and there is value in the cell.
 								PriceLabel = cell.getStringCellValue().trim();
+
 							}
 						}
 						if (PriceLabel != null)
@@ -376,14 +379,16 @@ public class AddNewPropertyPage {
 						wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(price_label)));
 						driver.findElement(By.xpath(price_label)).clear();
 						driver.findElement(By.xpath(price_label)).sendKeys(PriceLabel);
-						
-						//Selecting the Price label Position
+
+						// Selecting the Price label Position
 						je.executeScript("arguments[0].scrollIntoView(true);",
 								driver.findElement(By.xpath("//select[contains(@name,'price_label_position')]")));
-						wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//select[contains(@name,'price_label_position')]")));
-						Select select = new Select(driver.findElement(By.xpath("//select[contains(@name,'price_label_position')]")));
+						wait.until(ExpectedConditions.visibilityOfElementLocated(
+								By.xpath("//select[contains(@name,'price_label_position')]")));
+						Select select = new Select(
+								driver.findElement(By.xpath("//select[contains(@name,'price_label_position')]")));
 						select.selectByVisibleText("After Price");
-						
+
 						// Entering Size by fetching from Input Excel
 						String Size = "";
 						if (row != null) {
@@ -417,12 +422,14 @@ public class AddNewPropertyPage {
 						wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(size_label)));
 						driver.findElement(By.xpath(size_label)).clear();
 						driver.findElement(By.xpath(size_label)).sendKeys(SizeLabel);
-						
-						//Selecting the Size label Position
+
+						// Selecting the Size label Position
 						je.executeScript("arguments[0].scrollIntoView(true);",
 								driver.findElement(By.xpath("//select[contains(@name,'size_label_position')]")));
-						wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//select[contains(@name,'size_label_position')]")));
-					    select = new Select(driver.findElement(By.xpath("//select[contains(@name,'size_label_position')]")));
+						wait.until(ExpectedConditions.visibilityOfElementLocated(
+								By.xpath("//select[contains(@name,'size_label_position')]")));
+						select = new Select(
+								driver.findElement(By.xpath("//select[contains(@name,'size_label_position')]")));
 						select.selectByVisibleText("After Value");
 
 						// Entering Bedrooms by fetching from Input Excel
@@ -532,7 +539,6 @@ public class AddNewPropertyPage {
 						wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(property_parking)));
 						driver.findElement(By.xpath(property_parking)).sendKeys(Parking);
 
-						
 						// Entering and Selecting Address details by fetching it from Input Excel
 						String Address = "";
 						if (row != null) {
@@ -601,9 +607,16 @@ public class AddNewPropertyPage {
 						Thread.sleep(5000);
 						je.executeScript("arguments[0].click();", driver.findElement(By.xpath(save_draft)));
 
+						// Fetching and updating the newly created property URL Link
+						wait.until(ExpectedConditions
+								.visibilityOfElementLocated(By.xpath("//span[@id='sample-permalink']/a")));
+						String URL = driver.findElement(By.xpath("//span[@id='sample-permalink']/a")).getText();
+
 						// Updating the Automation Status
 						cell = row.getCell(1);
 						cell.setCellValue("Draft");
+						cell = row.createCell(31);
+						cell.setCellValue(URL);
 
 						// Fetch the details of Backlog Sheet
 						XSSFSheet sheet1 = workbook.getSheetAt(0);
