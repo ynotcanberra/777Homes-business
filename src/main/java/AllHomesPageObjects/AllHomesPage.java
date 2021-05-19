@@ -244,19 +244,29 @@ public class AllHomesPage {
 					cell = row.getCell(0);
 					double property_ID = cell.getNumericCellValue();
 					String propertyID = String.valueOf(property_ID);
+					System.out.println(propertyID);
 					cell = row.getCell(1);
 					String url = cell.getStringCellValue().trim();
 					driver.get(url);
 					if (driver.findElements(By.xpath("//div[@data-testid='badges']/span")).size() > 0) {
 						String propertyStatus = driver.findElement(By.xpath("//div[@data-testid='badges']/span"))
 								.getText().trim();
-						String propertyType = driver
+						String propertyType = "";
+						if(driver.findElements(By.xpath("//div[@data-testid='feature-icons']/span[1]")).size()>0)
+                        {
+						propertyType = driver
 								.findElement(By.xpath("//div[@data-testid='feature-icons']/span[1]")).getText().trim();
+                        }
 						for (int j = 1; j <= sheet1.getLastRowNum(); j++) {
 							row1 = sheet1.getRow(j);
 							cell1 = row1.getCell(0);
-							double expproperty_ID = cell1.getNumericCellValue();
-							String expectedPropertyID = String.valueOf(expproperty_ID);
+							String expectedPropertyID = "";
+							try {
+								double expproperty_ID = cell1.getNumericCellValue();
+								expectedPropertyID = String.valueOf(expproperty_ID);
+							} catch (Exception e) {
+								expectedPropertyID = cell1.getStringCellValue();
+							}
 							if (propertyID.equalsIgnoreCase(expectedPropertyID)) {
 								cell1 = row1.getCell(3);
 								String expectedPropertyType = cell1.getStringCellValue().trim();
@@ -278,19 +288,364 @@ public class AllHomesPage {
 									cell1.setCellValue("TO BE UPDATED");
 									cell1.setCellStyle(style);
 								}
+
+								wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(prop_City)));
+								wait.until(ExpectedConditions.elementToBeClickable(By.xpath(prop_City)));
+								String propCity = driver.findElement(By.xpath(prop_City)).getText().trim();
+								cell1 = row1.getCell(5);
+								if (cell1 != null) {
+									String expectedPropCity = cell1.getStringCellValue().trim();
+									if (!propCity.equalsIgnoreCase(expectedPropCity)) {
+										cell1.setCellValue(propCity);
+										cell1.setCellStyle(style);
+										cell1 = row1.createCell(1);
+										cell1.setCellValue("TO BE UPDATED");
+										cell1.setCellStyle(style);
+									}
+								} else {
+									cell1.setCellValue(propCity);
+									cell1.setCellStyle(style);
+									cell1 = row1.createCell(1);
+									cell1.setCellValue("TO BE UPDATED");
+									cell1.setCellStyle(style);
+								}
+
+								// Checking and Updating the Bedroom Details
+								// Entering Bedrooms by fetching from Input Excel
+								String Bedrooms = "";
+								cell1 = row1.getCell(12);
+								// Fetch the Bedrooms Details
+								try {
+									if (cell1 != null) {
+										// Found column and there is value in the cell.
+										Bedrooms = cell1.getStringCellValue();
+									}
+								} catch (Exception e) {
+									int bedrooms = (int) cell1.getNumericCellValue();
+									Bedrooms = String.valueOf(bedrooms);
+								}
+
+								String noofBedrooms = "";
+								if (driver.findElements(By.xpath(number_Bedrooms)).size() > 0) {
+									wait.until(
+											ExpectedConditions.visibilityOfElementLocated(By.xpath(number_Bedrooms)));
+									wait.until(ExpectedConditions.elementToBeClickable(By.xpath(number_Bedrooms)));
+									noofBedrooms = driver.findElement(By.xpath(number_Bedrooms)).getText().trim();
+									if (noofBedrooms.contains("bedrooms")) {
+										char[] a = noofBedrooms.toCharArray();
+										noofBedrooms = a[0] + "";
+									} else {
+										noofBedrooms = "";
+									}
+								}
+
+								if (!noofBedrooms.equalsIgnoreCase(Bedrooms)) {
+									cell1.setCellValue(noofBedrooms);
+									cell1.setCellStyle(style);
+									cell1 = row1.createCell(1);
+									cell1.setCellValue("TO BE UPDATED");
+									cell1.setCellStyle(style);
+								}
+
+								// Checking and updating the Bathroom Details
+								String Bathrooms = "";
+								cell1 = row1.getCell(13);
+								// Fetch the Bathrooms Details
+								try {
+									if (cell1 != null) {
+										// Found column and there is value in the cell.
+										Bathrooms = cell1.getStringCellValue();
+									}
+								} catch (Exception e) {
+									int bathrooms = (int) cell1.getNumericCellValue();
+									Bathrooms = String.valueOf(bathrooms);
+								}
+
+								String noofBathrooms = "";
+								if (driver.findElements(By.xpath(number_Bathrooms)).size() > 0) {
+									wait.until(
+											ExpectedConditions.visibilityOfElementLocated(By.xpath(number_Bathrooms)));
+									wait.until(ExpectedConditions.elementToBeClickable(By.xpath(number_Bathrooms)));
+									noofBathrooms = driver.findElement(By.xpath(number_Bathrooms)).getText().trim();
+									if (noofBathrooms.contains("bathrooms")) {
+										char[] a = noofBathrooms.toCharArray();
+										noofBathrooms = a[0] + "";
+									} else {
+										noofBathrooms = "";
+									}
+								}
+
+								if (!noofBathrooms.equalsIgnoreCase(Bathrooms)) {
+									cell1.setCellValue(noofBathrooms);
+									cell1.setCellStyle(style);
+									cell1 = row1.createCell(1);
+									cell1.setCellValue("TO BE UPDATED");
+									cell1.setCellStyle(style);
+								}
+
+								// Fetching the Number of Parking
+								String Parking = "";
+								cell1 = row1.getCell(16);
+								// Fetch the Parking Details
+								try {
+									if (cell1 != null) {
+										// Found column and there is value in the cell.
+										Parking = cell1.getStringCellValue();
+									}
+								} catch (Exception e) {
+									// Found column and there is value in the cell.
+									int parking = (int) cell1.getNumericCellValue();
+									Parking = String.valueOf(parking);
+								}
+
+								String noofParking = "";
+								if (driver.findElements(By.xpath(number_Parking)).size() > 0) {
+									wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(number_Parking)));
+									wait.until(ExpectedConditions.elementToBeClickable(By.xpath(number_Parking)));
+									noofParking = driver.findElement(By.xpath(number_Parking)).getText().trim();
+									if (noofParking.contains("garage spaces")) {
+										char[] a = noofParking.toCharArray();
+										noofParking = a[0] + "";
+									} else {
+										noofParking = "";
+									}
+								}
+
+								if (!noofParking.equalsIgnoreCase(Parking)) {
+									cell1.setCellValue(noofParking);
+									cell1.setCellStyle(style);
+									cell1 = row1.createCell(1);
+									cell1.setCellValue("TO BE UPDATED");
+									cell1.setCellStyle(style);
+								}
+
+								// Fetching the Energy rating
+								String Heat = "";
+								cell1 = row1.getCell(15);
+								// Fetch the Heat Details
+								try {
+									if (cell1 != null) {
+										// Found column and there is value in the cell.
+										Heat = cell1.getStringCellValue();
+									}
+								} catch (Exception e) {
+									int heat = (int) cell1.getNumericCellValue();
+									Heat = String.valueOf(heat);
+								}
+
+								String energyRating = "";
+								if (driver.findElements(By.xpath(energy_Rating)).size() > 0) {
+									wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(energy_Rating)));
+									wait.until(ExpectedConditions.elementToBeClickable(By.xpath(energy_Rating)));
+									energyRating = driver.findElement(By.xpath(energy_Rating)).getText().trim();
+									if (energyRating.contains("EER")) {
+										char[] a = energyRating.toCharArray();
+										energyRating = a[0] + "";
+									} else {
+										energyRating = "";
+									}
+								}
+
+								if (!energyRating.equalsIgnoreCase(Heat)) {
+									cell1.setCellValue(energyRating);
+									cell1.setCellStyle(style);
+									cell1 = row1.createCell(1);
+									cell1.setCellValue("TO BE UPDATED");
+									cell1.setCellStyle(style);
+								}
+
+								// Fetching the Description
+								String description = "";
+								cell1 = row1.getCell(18);
+								// Fetch the Title Details
+								if (cell1 != null) {
+									// Found column and there is value in the cell.
+									description = cell1.getStringCellValue().trim();
+								}
+								
+								String descrption = "";
+								if(driver.findElements(By.xpath("//div[@class='ReactCollapse--content']/section/div")).size()>0)
+                                { 
+								wait.until(ExpectedConditions.visibilityOfElementLocated(
+										By.xpath("//div[@class='ReactCollapse--content']/section/div")));
+								wait.until(ExpectedConditions.elementToBeClickable(
+										By.xpath("//div[@class='ReactCollapse--content']/section/div")));
+								descrption = driver
+										.findElement(By.xpath("//div[@class='ReactCollapse--content']/section/div"))
+                                		.getText().trim();
+                               }
+								if (!descrption.equalsIgnoreCase(description)) {
+									cell1.setCellValue(descrption);
+									cell1.setCellStyle(style);
+									cell1 = row1.createCell(1);
+									cell1.setCellValue("TO BE UPDATED");
+									cell1.setCellStyle(style);
+								}
+
+								// fetching the Size Details
+								String Size = "";
+								cell1 = row1.getCell(7);
+								// Fetch the Price label Details
+								if (cell1 != null) {
+									// Found column and there is value in the cell.
+									Size = cell1.getStringCellValue().trim();
+								}
+
+								String size = "";
+								if (driver.findElements(By.xpath("//span[contains(text(),'size')]/following::span[1]"))
+										.size() > 0) {
+									wait.until(ExpectedConditions.visibilityOfElementLocated(
+											By.xpath("//span[contains(text(),'size')]/following::span[1]")));
+									wait.until(ExpectedConditions.elementToBeClickable(
+											By.xpath("//span[contains(text(),'size')]/following::span[1]")));
+									List<WebElement> element = driver.findElements(
+											By.xpath("//span[contains(text(),'size')]/following::span[1]"));
+									size = "Block/House: ";
+									for (int k = 0; k < element.size(); k++) {
+										if (element.size() == 1) {
+											String text = element.get(k).getText().trim();
+											String[] value = text.split(" ");
+											size = size + value[0] + "/ -";
+										} else {
+											String text1 = element.get(0).getText().trim();
+											String text2 = element.get(1).getText().trim();
+											String[] value1 = text1.split(" ");
+											size = size + value1[0] + "/ ";
+											String[] value2 = text2.split(" ");
+											size = size + value2[0];
+											break;
+										}
+									}
+								} else {
+									size = "";
+								}
+
+								if (!size.equalsIgnoreCase(Size)) {
+									cell1.setCellValue(size);
+									cell1.setCellStyle(style);
+									cell1 = row1.createCell(1);
+									cell1.setCellValue("TO BE UPDATED");
+									cell1.setCellStyle(style);
+								}
+
+								// Checking and updating the Price details
+								String expectedPrice = "";
+								cell1 = row1.getCell(10);
+								// Fetch the Price Details
+								try {
+									if (cell1 != null) {
+										// Found column and there is value in the cell.
+										expectedPrice = cell1.getStringCellValue().trim();
+										expectedPrice = expectedPrice.replace("\t", "");
+										// Price = String.valueOf(price);
+									}
+								} catch (Exception e) {
+									int price = (int) cell1.getNumericCellValue();
+									expectedPrice = String.valueOf(price);
+								}
+
+								String expectedPriceLabel = "";
+								cell1 = row1.getCell(11);
+								// Fetch the Price label Details
+								if (cell1 != null) {
+									// Found column and there is value in the cell.
+									expectedPriceLabel = cell1.getStringCellValue().trim();
+								}
+
+								String Price = "";
+								String PriceLabel = "";
+								if (driver.findElements(By.xpath(price)).size() > 0) {
+									wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(price)));
+									wait.until(ExpectedConditions.elementToBeClickable(By.xpath(price)));
+									String priceTag = driver.findElement(By.xpath(price)).getText();
+									if (priceTag.contains("$")) {
+										if (priceTag.contains("-")) {
+											String[] a = priceTag.split("-");
+											Price = a[0];
+											char[] pr = Price.toCharArray();
+											ArrayList<Character> ab = new ArrayList<Character>();
+											for (int k = 0; k < pr.length; k++) {
+												if (pr[k] == '0' | pr[k] == '1' | pr[k] == '2' | pr[k] == '3'
+														| pr[k] == '4' | pr[k] == '5' | pr[k] == '6' | pr[k] == '7'
+														| pr[k] == '8' | pr[k] == '9') {
+													ab.add(pr[k]);
+												}
+
+											}
+											StringBuilder sb = new StringBuilder();
+											for (Character s : ab) {
+												sb.append(s);
+												sb.append("\t");
+											}
+											Price = sb.toString();
+											PriceLabel = priceTag;
+										}
+
+										else {
+											PriceLabel = priceTag;
+											Price = priceTag;
+											char[] pr = Price.toCharArray();
+											ArrayList<Character> ab = new ArrayList<Character>();
+											for (int k = 0; k < pr.length; k++) {
+												if (pr[k] == '0' | pr[k] == '1' | pr[k] == '2' | pr[k] == '3'
+														| pr[k] == '4' | pr[k] == '5' | pr[k] == '6' | pr[k] == '7'
+														| pr[k] == '8' | pr[k] == '9') {
+													ab.add(pr[k]);
+												}
+
+											}
+											StringBuilder sb = new StringBuilder();
+											for (Character s : ab) {
+												sb.append(s);
+												sb.append("\t");
+											}
+											Price = sb.toString();
+										}
+									} else {
+										PriceLabel = priceTag;
+									}
+								}
+
+								if (!Price.equalsIgnoreCase(expectedPrice)) {
+									cell1 = row1.getCell(10);
+									cell1.setCellValue(Price);
+									cell1.setCellStyle(style);
+									cell1 = row1.createCell(1);
+									cell1.setCellValue("TO BE UPDATED");
+									cell1.setCellStyle(style);
+								}
+
+								if (!PriceLabel.equalsIgnoreCase(expectedPriceLabel)) {
+									cell1 = row1.getCell(11);
+									cell1.setCellValue(PriceLabel);
+									cell1.setCellStyle(style);
+									cell1 = row1.createCell(1);
+									cell1.setCellValue("TO BE UPDATED");
+									cell1.setCellStyle(style);
+								}
 							}
+
 						}
 					}
 
 					else {
 						String propertyStatus = "Sale";
-						String propertyType = driver
+						String propertyType ="";
+						if(driver.findElements(By.xpath("//div[@data-testid='feature-icons']/span[1]")).size()>0)
+                        {
+						propertyType = driver
 								.findElement(By.xpath("//div[@data-testid='feature-icons']/span[1]")).getText().trim();
+                        }
 						for (int j = 1; j <= sheet1.getLastRowNum(); j++) {
 							row1 = sheet1.getRow(j);
 							cell1 = row1.getCell(0);
-							double expPropertyID = cell1.getNumericCellValue();
-							String expectedPropertyID = String.valueOf(expPropertyID);
+							String expectedPropertyID = "";
+							try {
+								double expPropertyID = cell1.getNumericCellValue();
+								expectedPropertyID = String.valueOf(expPropertyID);
+							} catch (Exception e) {
+								expectedPropertyID = cell1.getStringCellValue();
+							}
 							if (propertyID.equalsIgnoreCase(expectedPropertyID)) {
 								cell1 = row1.getCell(3);
 								String expectedPropertyType = cell1.getStringCellValue().trim();
@@ -315,6 +670,340 @@ public class AllHomesPage {
 								}
 							}
 						}
+
+						wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(prop_City)));
+						wait.until(ExpectedConditions.elementToBeClickable(By.xpath(prop_City)));
+						String propCity = driver.findElement(By.xpath(prop_City)).getText().trim();
+						cell1 = row1.getCell(5);
+						if (cell1 != null) {
+							String expectedPropCity = cell1.getStringCellValue().trim();
+							if (!propCity.equalsIgnoreCase(expectedPropCity)) {
+								cell1.setCellValue(propCity);
+								cell1.setCellStyle(style);
+								cell1 = row1.createCell(1);
+								cell1.setCellValue("TO BE UPDATED");
+								cell1.setCellStyle(style);
+							}
+						} else {
+							cell1.setCellValue(propCity);
+							cell1.setCellStyle(style);
+							cell1 = row1.createCell(1);
+							cell1.setCellValue("TO BE UPDATED");
+							cell1.setCellStyle(style);
+						}
+
+						// Checking and Updating the Bedroom Details
+						// Entering Bedrooms by fetching from Input Excel
+						String Bedrooms = "";
+						cell1 = row1.getCell(12);
+						// Fetch the Bedrooms Details
+						try {
+							if (cell1 != null) {
+								// Found column and there is value in the cell.
+								Bedrooms = cell1.getStringCellValue();
+							}
+						} catch (Exception e) {
+							int bedrooms = (int) cell1.getNumericCellValue();
+							Bedrooms = String.valueOf(bedrooms);
+						}
+
+						String noofBedrooms = "";
+						if (driver.findElements(By.xpath(number_Bedrooms)).size() > 0) {
+							wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(number_Bedrooms)));
+							wait.until(ExpectedConditions.elementToBeClickable(By.xpath(number_Bedrooms)));
+							noofBedrooms = driver.findElement(By.xpath(number_Bedrooms)).getText().trim();
+							if (noofBedrooms.contains("bedrooms")) {
+								char[] a = noofBedrooms.toCharArray();
+								noofBedrooms = a[0] + "";
+							} else {
+								noofBedrooms = "";
+							}
+						}
+
+						if (!noofBedrooms.equalsIgnoreCase(Bedrooms)) {
+							cell1.setCellValue(noofBedrooms);
+							cell1.setCellStyle(style);
+							cell1 = row1.createCell(1);
+							cell1.setCellValue("TO BE UPDATED");
+							cell1.setCellStyle(style);
+						}
+
+						// Checking and updating the Bathroom Details
+						String Bathrooms = "";
+						cell1 = row1.getCell(13);
+						// Fetch the Bathrooms Details
+						try {
+							if (cell1 != null) {
+								// Found column and there is value in the cell.
+								Bathrooms = cell1.getStringCellValue();
+							}
+						} catch (Exception e) {
+							int bathrooms = (int) cell1.getNumericCellValue();
+							Bathrooms = String.valueOf(bathrooms);
+						}
+
+						String noofBathrooms = "";
+						if (driver.findElements(By.xpath(number_Bathrooms)).size() > 0) {
+							wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(number_Bathrooms)));
+							wait.until(ExpectedConditions.elementToBeClickable(By.xpath(number_Bathrooms)));
+							noofBathrooms = driver.findElement(By.xpath(number_Bathrooms)).getText().trim();
+							if (noofBathrooms.contains("bathrooms")) {
+								char[] a = noofBathrooms.toCharArray();
+								noofBathrooms = a[0] + "";
+							} else {
+								noofBathrooms = "";
+							}
+						}
+
+						if (!noofBathrooms.equalsIgnoreCase(Bathrooms)) {
+							cell1.setCellValue(noofBathrooms);
+							cell1.setCellStyle(style);
+							cell1 = row1.createCell(1);
+							cell1.setCellValue("TO BE UPDATED");
+							cell1.setCellStyle(style);
+						}
+
+						// Fetching the Number of Parking
+						String Parking = "";
+						cell1 = row1.getCell(16);
+						// Fetch the Parking Details
+						try {
+							if (cell1 != null) {
+								// Found column and there is value in the cell.
+								Parking = cell1.getStringCellValue();
+							}
+						} catch (Exception e) {
+							// Found column and there is value in the cell.
+							int parking = (int) cell1.getNumericCellValue();
+							Parking = String.valueOf(parking);
+						}
+
+						String noofParking = "";
+						if (driver.findElements(By.xpath(number_Parking)).size() > 0) {
+							wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(number_Parking)));
+							wait.until(ExpectedConditions.elementToBeClickable(By.xpath(number_Parking)));
+							noofParking = driver.findElement(By.xpath(number_Parking)).getText().trim();
+							if (noofParking.contains("garage spaces")) {
+								char[] a = noofParking.toCharArray();
+								noofParking = a[0] + "";
+							} else {
+								noofParking = "";
+							}
+						}
+
+						if (!noofParking.equalsIgnoreCase(Parking)) {
+							cell1.setCellValue(noofParking);
+							cell1.setCellStyle(style);
+							cell1 = row1.createCell(1);
+							cell1.setCellValue("TO BE UPDATED");
+							cell1.setCellStyle(style);
+						}
+
+						// Fetching the Energy rating
+						String Heat = "";
+						cell1 = row1.getCell(15);
+						// Fetch the Heat Details
+						try {
+							if (cell1 != null) {
+								// Found column and there is value in the cell.
+								Heat = cell1.getStringCellValue();
+							}
+						} catch (Exception e) {
+							int heat = (int) cell1.getNumericCellValue();
+							Heat = String.valueOf(heat);
+						}
+
+						String energyRating = "";
+						if (driver.findElements(By.xpath(energy_Rating)).size() > 0) {
+							wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(energy_Rating)));
+							wait.until(ExpectedConditions.elementToBeClickable(By.xpath(energy_Rating)));
+							energyRating = driver.findElement(By.xpath(energy_Rating)).getText().trim();
+							if (energyRating.contains("EER")) {
+								char[] a = energyRating.toCharArray();
+								energyRating = a[0] + "";
+							} else {
+								energyRating = "";
+							}
+						}
+
+						if (!energyRating.equalsIgnoreCase(Heat)) {
+							cell1.setCellValue(energyRating);
+							cell1.setCellStyle(style);
+							cell1 = row1.createCell(1);
+							cell1.setCellValue("TO BE UPDATED");
+							cell1.setCellStyle(style);
+						}
+
+						// Fetching the Description
+						String description = "";
+						cell1 = row1.getCell(18);
+						// Fetch the Title Details
+						if (cell1 != null) {
+							// Found column and there is value in the cell.
+							description = cell1.getStringCellValue().trim();
+						}
+						String descrption = "";
+						if(driver.findElements(By.xpath("//div[@class='ReactCollapse--content']/section/div")).size()>0)
+                        { 
+						wait.until(ExpectedConditions.visibilityOfElementLocated(
+								By.xpath("//div[@class='ReactCollapse--content']/section/div")));
+						wait.until(ExpectedConditions.elementToBeClickable(
+								By.xpath("//div[@class='ReactCollapse--content']/section/div")));
+						descrption = driver
+								.findElement(By.xpath("//div[@class='ReactCollapse--content']/section/div"))
+                        		.getText().trim();
+                       }
+
+						if (!descrption.equalsIgnoreCase(description)) {
+							cell1.setCellValue(descrption);
+							cell1.setCellStyle(style);
+							cell1 = row1.createCell(1);
+							cell1.setCellValue("TO BE UPDATED");
+							cell1.setCellStyle(style);
+						}
+
+						// fetching the Size Details
+						String Size = "";
+						cell1 = row1.getCell(7);
+						// Fetch the Price label Details
+						if (cell1 != null) {
+							// Found column and there is value in the cell.
+							Size = cell1.getStringCellValue().trim();
+						}
+
+						String size = "";
+						if (driver.findElements(By.xpath("//span[contains(text(),'size')]/following::span[1]"))
+								.size() > 0) {
+							wait.until(ExpectedConditions.visibilityOfElementLocated(
+									By.xpath("//span[contains(text(),'size')]/following::span[1]")));
+							wait.until(ExpectedConditions.elementToBeClickable(
+									By.xpath("//span[contains(text(),'size')]/following::span[1]")));
+							List<WebElement> element = driver
+									.findElements(By.xpath("//span[contains(text(),'size')]/following::span[1]"));
+							size = "Block/House: ";
+							for (int k = 0; k < element.size(); k++) {
+								if (element.size() == 1) {
+									String text = element.get(k).getText().trim();
+									String[] value = text.split(" ");
+									size = size + value[0] + "/ -";
+								} else {
+									String text1 = element.get(0).getText().trim();
+									String text2 = element.get(1).getText().trim();
+									String[] value1 = text1.split(" ");
+									size = size + value1[0] + "/ ";
+									String[] value2 = text2.split(" ");
+									size = size + value2[0];
+									break;
+								}
+							}
+						} else {
+							size = "";
+						}
+
+						if (!size.equalsIgnoreCase(Size)) {
+							cell1.setCellValue(size);
+							cell1.setCellStyle(style);
+							cell1 = row1.createCell(1);
+							cell1.setCellValue("TO BE UPDATED");
+							cell1.setCellStyle(style);
+						}
+
+						// Checking and updating the Price details
+						String expectedPrice = "";
+						cell1 = row1.getCell(10);
+						// Fetch the Price Details
+						try {
+							if (cell1 != null) {
+								// Found column and there is value in the cell.
+								expectedPrice = cell1.getStringCellValue().trim();
+								expectedPrice = expectedPrice.replace("\t", "");
+								// Price = String.valueOf(price);
+							}
+						} catch (Exception e) {
+							int price = (int) cell1.getNumericCellValue();
+							expectedPrice = String.valueOf(price);
+						}
+
+						String expectedPriceLabel = "";
+						cell1 = row1.getCell(11);
+						// Fetch the Price label Details
+						if (cell1 != null) {
+							// Found column and there is value in the cell.
+							expectedPriceLabel = cell1.getStringCellValue().trim();
+						}
+
+						String Price = "";
+						String PriceLabel = "";
+						if (driver.findElements(By.xpath(price)).size() > 0) {
+							wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(price)));
+							wait.until(ExpectedConditions.elementToBeClickable(By.xpath(price)));
+							String priceTag = driver.findElement(By.xpath(price)).getText();
+							if (priceTag.contains("$")) {
+								if (priceTag.contains("-")) {
+									String[] a = priceTag.split("-");
+									Price = a[0];
+									char[] pr = Price.toCharArray();
+									ArrayList<Character> ab = new ArrayList<Character>();
+									for (int k = 0; k < pr.length; k++) {
+										if (pr[k] == '0' | pr[k] == '1' | pr[k] == '2' | pr[k] == '3' | pr[k] == '4'
+												| pr[k] == '5' | pr[k] == '6' | pr[k] == '7' | pr[k] == '8'
+												| pr[k] == '9') {
+											ab.add(pr[k]);
+										}
+
+									}
+									StringBuilder sb = new StringBuilder();
+									for (Character s : ab) {
+										sb.append(s);
+										sb.append("\t");
+									}
+									Price = sb.toString();
+									PriceLabel = priceTag;
+								}
+
+								else {
+									PriceLabel = priceTag;
+									Price = priceTag;
+									char[] pr = Price.toCharArray();
+									ArrayList<Character> ab = new ArrayList<Character>();
+									for (int k = 0; k < pr.length; k++) {
+										if (pr[k] == '0' | pr[k] == '1' | pr[k] == '2' | pr[k] == '3' | pr[k] == '4'
+												| pr[k] == '5' | pr[k] == '6' | pr[k] == '7' | pr[k] == '8'
+												| pr[k] == '9') {
+											ab.add(pr[k]);
+										}
+
+									}
+									StringBuilder sb = new StringBuilder();
+									for (Character s : ab) {
+										sb.append(s);
+										sb.append("\t");
+									}
+									Price = sb.toString();
+								}
+							} else {
+								PriceLabel = priceTag;
+							}
+						}
+
+						if (!Price.equalsIgnoreCase(expectedPrice)) {
+							cell1 = row1.getCell(10);
+							cell1.setCellValue(Price);
+							cell1.setCellStyle(style);
+							cell1 = row1.createCell(1);
+							cell1.setCellValue("TO BE UPDATED");
+							cell1.setCellStyle(style);
+						}
+
+						if (!PriceLabel.equalsIgnoreCase(expectedPriceLabel)) {
+							cell1 = row1.getCell(11);
+							cell1.setCellValue(PriceLabel);
+							cell1.setCellStyle(style);
+							cell1 = row1.createCell(1);
+							cell1.setCellValue("TO BE UPDATED");
+							cell1.setCellStyle(style);
+						}
+
 					}
 				}
 
@@ -329,7 +1018,9 @@ public class AllHomesPage {
 
 			}
 
-		} catch (Exception e) {
+		} catch (
+
+		Exception e) {
 			e.printStackTrace();
 		}
 		return driver;
@@ -383,14 +1074,11 @@ public class AllHomesPage {
 				int x = (int) iD;
 				String ID = String.valueOf(x);
 				cell = row.getCell(5);
-				String contactInfo ="";
-				if(cell != null)
-				{
-				contactInfo = cell.getStringCellValue().trim();
-				}
-				else
-				{
-				contactInfo ="";
+				String contactInfo = "";
+				if (cell != null) {
+					contactInfo = cell.getStringCellValue().trim();
+				} else {
+					contactInfo = "";
 				}
 				cell = row.getCell(6);
 				String loginDetail = cell.getStringCellValue().trim();
@@ -410,24 +1098,17 @@ public class AllHomesPage {
 					wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(prop_Type)));
 					wait.until(ExpectedConditions.elementToBeClickable(By.xpath(prop_Type)));
 					String propType = driver.findElement(By.xpath(prop_Type)).getText().trim();
-					
-					if(propType.contains("House"))
-					{
+
+					if (propType.contains("House")) {
 						propType = "House";
-					}
-					else if(propType.contains("Apartment"))
-					{
+					} else if (propType.contains("Apartment")) {
 						propType = "Apartment";
-					}
-					else if(propType.contains("Townhouse"))
-					{
+					} else if (propType.contains("Townhouse")) {
 						propType = "Town house";
-					}
-					else if(propType.contains("Land")||propType.contains("Other"))
-					{
+					} else if (propType.contains("Land") || propType.contains("Other")) {
 						propType = "Others";
 					}
-					
+
 					// Fetching the Property Status
 					String propStatus = "";
 					if (driver.findElements(By.xpath("//div[@data-testid='badges']/span")).size() > 0) {
@@ -571,7 +1252,7 @@ public class AllHomesPage {
 								String[] a = priceTag.split("-");
 								Price = a[0];
 								char[] pr = Price.toCharArray();
-								ArrayList<Character>ab=new ArrayList<Character>();
+								ArrayList<Character> ab = new ArrayList<Character>();
 								for (int k = 0; k < pr.length; k++) {
 									if (pr[k] == '0' | pr[k] == '1' | pr[k] == '2' | pr[k] == '3' | pr[k] == '4'
 											| pr[k] == '5' | pr[k] == '6' | pr[k] == '7' | pr[k] == '8'
@@ -579,14 +1260,13 @@ public class AllHomesPage {
 										ab.add(pr[k]);
 									}
 
-								}								
-								StringBuilder sb = new StringBuilder();
-								for (Character s : ab)
-								{
-								    sb.append(s);
-								    sb.append("\t");
 								}
-								Price = sb.toString();							
+								StringBuilder sb = new StringBuilder();
+								for (Character s : ab) {
+									sb.append(s);
+									sb.append("\t");
+								}
+								Price = sb.toString();
 								PriceLabel = priceTag;
 							}
 
@@ -594,7 +1274,7 @@ public class AllHomesPage {
 								PriceLabel = priceTag;
 								Price = priceTag;
 								char[] pr = Price.toCharArray();
-								ArrayList<Character>ab=new ArrayList<Character>();								
+								ArrayList<Character> ab = new ArrayList<Character>();
 								for (int k = 0; k < pr.length; k++) {
 									if (pr[k] == '0' | pr[k] == '1' | pr[k] == '2' | pr[k] == '3' | pr[k] == '4'
 											| pr[k] == '5' | pr[k] == '6' | pr[k] == '7' | pr[k] == '8'
@@ -604,12 +1284,11 @@ public class AllHomesPage {
 
 								}
 								StringBuilder sb = new StringBuilder();
-								for (Character s : ab)
-								{
-								    sb.append(s);
-								    sb.append("\t");
+								for (Character s : ab) {
+									sb.append(s);
+									sb.append("\t");
 								}
-								Price = sb.toString();	
+								Price = sb.toString();
 							}
 						} else {
 							PriceLabel = priceTag;

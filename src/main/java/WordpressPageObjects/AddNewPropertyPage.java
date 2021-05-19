@@ -14,6 +14,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Select;
@@ -317,6 +319,31 @@ public class AddNewPropertyPage {
 						driver.findElement(By.xpath(content)).sendKeys(description);
 						driver.switchTo().defaultContent();
 
+						// Entering the meta description
+						String[] metDes = description.split(",");
+						System.out.println(metDes[0]);
+						String metaDescription = propertyTitle + " - " + metDes[0];
+						System.out.println(metaDescription);
+						je.executeScript("arguments[0].scrollIntoView(true);", driver.findElement(By.xpath("//div[text()='Meta description']/following::div[1]")));
+						wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[text()='Meta description']/following::div[1]")));
+						JavascriptExecutor executor = (JavascriptExecutor)driver;
+						executor.executeScript("arguments[0].click();", driver.findElement(By.xpath("//div[text()='Meta description']/following::div[1]")));					
+						Actions action = new Actions(driver);
+						action.sendKeys(driver.findElement(By.xpath("//div[text()='Meta description']/following::div[1]")),metaDescription).build().perform();
+						
+						// Clicking on Advanced and selecting the Options
+						wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[text()='Advanced']")));
+						driver.findElement(By.xpath("//span[text()='Advanced']")).click();
+						wait.until(ExpectedConditions.visibilityOfElementLocated(
+								By.xpath("//select[contains(@id,'yoast-meta-robots-noindex-metabox')]")));
+						Select select = new Select(
+								driver.findElement(By.xpath("//select[contains(@id,'yoast-meta-robots-noindex-metabox')]")));
+						select.selectByVisibleText("Yes (current default for Mikado Properties)");
+						wait.until(ExpectedConditions.visibilityOfElementLocated(
+								By.xpath("(//input[contains(@name,'yoast-meta-robots-nofollow-metabox')])[1]")));
+						driver.findElement(
+								By.xpath("(//input[contains(@name,'yoast-meta-robots-nofollow-metabox')])[1]")).click();
+						
 						// Entering Property ID by fetching from Input Excel
 						String propertyId = "";
 						if (row != null) {
@@ -385,7 +412,7 @@ public class AddNewPropertyPage {
 								driver.findElement(By.xpath("//select[contains(@name,'price_label_position')]")));
 						wait.until(ExpectedConditions.visibilityOfElementLocated(
 								By.xpath("//select[contains(@name,'price_label_position')]")));
-						Select select = new Select(
+						select = new Select(
 								driver.findElement(By.xpath("//select[contains(@name,'price_label_position')]")));
 						select.selectByVisibleText("After Price");
 
@@ -610,13 +637,12 @@ public class AddNewPropertyPage {
 						// Fetching and updating the newly created property URL Link
 						wait.until(ExpectedConditions
 								.visibilityOfElementLocated(By.xpath("//span[@id='sample-permalink']/a")));
-						String URL = driver.findElement(By.xpath("//span[@id='sample-permalink']/a")).getText();
+						String URL = driver.findElement(By.xpath("//span[@id='sample-permalink']/a"))
+								.getAttribute("href");
 
 						// Updating the Automation Status
 						cell = row.getCell(1);
 						cell.setCellValue("Draft");
-						cell = row.createCell(31);
-						cell.setCellValue(URL);
 
 						// Fetch the details of Backlog Sheet
 						XSSFSheet sheet1 = workbook.getSheetAt(0);
@@ -638,6 +664,8 @@ public class AddNewPropertyPage {
 							if (prop_ID.equalsIgnoreCase(propertyId)) {
 								cell1 = row1.getCell(3);
 								cell1.setCellValue("Draft");
+								cell1 = row1.createCell(2);
+								cell1.setCellValue(URL);
 							} else {
 								continue;
 							}
