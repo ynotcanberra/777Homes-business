@@ -244,7 +244,6 @@ public class AllHomesPage {
 					cell = row.getCell(0);
 					double property_ID = cell.getNumericCellValue();
 					String propertyID = String.valueOf(property_ID);
-					System.out.println(propertyID);
 					cell = row.getCell(1);
 					String url = cell.getStringCellValue().trim();
 					driver.get(url);
@@ -252,11 +251,10 @@ public class AllHomesPage {
 						String propertyStatus = driver.findElement(By.xpath("//div[@data-testid='badges']/span"))
 								.getText().trim();
 						String propertyType = "";
-						if(driver.findElements(By.xpath("//div[@data-testid='feature-icons']/span[1]")).size()>0)
-                        {
-						propertyType = driver
-								.findElement(By.xpath("//div[@data-testid='feature-icons']/span[1]")).getText().trim();
-                        }
+						if (driver.findElements(By.xpath("//div[@data-testid='feature-icons']/span[1]")).size() > 0) {
+							propertyType = driver.findElement(By.xpath("//div[@data-testid='feature-icons']/span[1]"))
+									.getText().trim();
+						}
 						for (int j = 1; j <= sheet1.getLastRowNum(); j++) {
 							row1 = sheet1.getRow(j);
 							cell1 = row1.getCell(0);
@@ -274,7 +272,13 @@ public class AllHomesPage {
 								String expectedPropertyStatus = cell1.getStringCellValue().trim();
 								if (!propertyType.equalsIgnoreCase(expectedPropertyType)) {
 									cell1 = row1.getCell(3);
-									cell1.setCellValue(propertyType);
+									if (propertyType.equalsIgnoreCase("House and Land Package")) {
+										cell1 = row1.createCell(3);
+										cell1.setCellValue("House");
+									} else {
+										cell1 = row1.createCell(3);
+										cell1.setCellValue(propertyType);
+									}
 									cell1.setCellStyle(style);
 									cell1 = row1.createCell(1);
 									cell1.setCellValue("TO BE UPDATED");
@@ -292,6 +296,10 @@ public class AllHomesPage {
 								wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(prop_City)));
 								wait.until(ExpectedConditions.elementToBeClickable(By.xpath(prop_City)));
 								String propCity = driver.findElement(By.xpath(prop_City)).getText().trim();
+								if(propCity.equalsIgnoreCase("MacGregor"))
+								{
+									propCity ="Macgregor";
+								}
 								cell1 = row1.getCell(5);
 								if (cell1 != null) {
 									String expectedPropCity = cell1.getStringCellValue().trim();
@@ -303,6 +311,7 @@ public class AllHomesPage {
 										cell1.setCellStyle(style);
 									}
 								} else {
+									cell1 = row1.createCell(5);
 									cell1.setCellValue(propCity);
 									cell1.setCellStyle(style);
 									cell1 = row1.createCell(1);
@@ -462,18 +471,18 @@ public class AllHomesPage {
 									// Found column and there is value in the cell.
 									description = cell1.getStringCellValue().trim();
 								}
-								
+
 								String descrption = "";
-								if(driver.findElements(By.xpath("//div[@class='ReactCollapse--content']/section/div")).size()>0)
-                                { 
-								wait.until(ExpectedConditions.visibilityOfElementLocated(
-										By.xpath("//div[@class='ReactCollapse--content']/section/div")));
-								wait.until(ExpectedConditions.elementToBeClickable(
-										By.xpath("//div[@class='ReactCollapse--content']/section/div")));
-								descrption = driver
-										.findElement(By.xpath("//div[@class='ReactCollapse--content']/section/div"))
-                                		.getText().trim();
-                               }
+								if (driver.findElements(By.xpath("//div[@class='ReactCollapse--content']/section/div"))
+										.size() > 0) {
+									wait.until(ExpectedConditions.visibilityOfElementLocated(
+											By.xpath("//div[@class='ReactCollapse--content']/section/div")));
+									wait.until(ExpectedConditions.elementToBeClickable(
+											By.xpath("//div[@class='ReactCollapse--content']/section/div")));
+									descrption = driver
+											.findElement(By.xpath("//div[@class='ReactCollapse--content']/section/div"))
+											.getText().trim();
+								}
 								if (!descrption.equalsIgnoreCase(description)) {
 									cell1.setCellValue(descrption);
 									cell1.setCellStyle(style);
@@ -547,9 +556,14 @@ public class AllHomesPage {
 								String expectedPriceLabel = "";
 								cell1 = row1.getCell(11);
 								// Fetch the Price label Details
-								if (cell1 != null) {
-									// Found column and there is value in the cell.
-									expectedPriceLabel = cell1.getStringCellValue().trim();
+								try {
+									if (cell1 != null) {
+										// Found column and there is value in the cell.
+										expectedPriceLabel = cell1.getStringCellValue().trim();
+									}
+								} catch (Exception e) {
+									int expPriceLabel = (int) cell1.getNumericCellValue();
+									expectedPriceLabel = String.valueOf(expPriceLabel);
 								}
 
 								String Price = "";
@@ -630,12 +644,11 @@ public class AllHomesPage {
 
 					else {
 						String propertyStatus = "Sale";
-						String propertyType ="";
-						if(driver.findElements(By.xpath("//div[@data-testid='feature-icons']/span[1]")).size()>0)
-                        {
-						propertyType = driver
-								.findElement(By.xpath("//div[@data-testid='feature-icons']/span[1]")).getText().trim();
-                        }
+						String propertyType = "";
+						if (driver.findElements(By.xpath("//div[@data-testid='feature-icons']/span[1]")).size() > 0) {
+							propertyType = driver.findElement(By.xpath("//div[@data-testid='feature-icons']/span[1]"))
+									.getText().trim();
+						}
 						for (int j = 1; j <= sheet1.getLastRowNum(); j++) {
 							row1 = sheet1.getRow(j);
 							cell1 = row1.getCell(0);
@@ -653,7 +666,13 @@ public class AllHomesPage {
 								String expectedPropertyStatus = cell1.getStringCellValue().trim();
 								if (!propertyType.equalsIgnoreCase(expectedPropertyType)) {
 									cell1 = row1.getCell(3);
-									cell1.setCellValue(propertyType);
+									if (propertyType.equalsIgnoreCase("House and Land Package")) {
+										cell1 = row1.createCell(3);
+										cell1.setCellValue("House");
+									} else {
+										cell1 = row1.createCell(3);
+										cell1.setCellValue(propertyType);
+									}
 									cell1.setCellStyle(style);
 									cell1 = row1.createCell(1);
 									cell1.setCellValue("TO BE UPDATED");
@@ -674,6 +693,10 @@ public class AllHomesPage {
 						wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(prop_City)));
 						wait.until(ExpectedConditions.elementToBeClickable(By.xpath(prop_City)));
 						String propCity = driver.findElement(By.xpath(prop_City)).getText().trim();
+						if(propCity.equalsIgnoreCase("MacGregor"))
+						{
+							propCity ="Macgregor";
+						}
 						cell1 = row1.getCell(5);
 						if (cell1 != null) {
 							String expectedPropCity = cell1.getStringCellValue().trim();
@@ -843,16 +866,16 @@ public class AllHomesPage {
 							description = cell1.getStringCellValue().trim();
 						}
 						String descrption = "";
-						if(driver.findElements(By.xpath("//div[@class='ReactCollapse--content']/section/div")).size()>0)
-                        { 
-						wait.until(ExpectedConditions.visibilityOfElementLocated(
-								By.xpath("//div[@class='ReactCollapse--content']/section/div")));
-						wait.until(ExpectedConditions.elementToBeClickable(
-								By.xpath("//div[@class='ReactCollapse--content']/section/div")));
-						descrption = driver
-								.findElement(By.xpath("//div[@class='ReactCollapse--content']/section/div"))
-                        		.getText().trim();
-                       }
+						if (driver.findElements(By.xpath("//div[@class='ReactCollapse--content']/section/div"))
+								.size() > 0) {
+							wait.until(ExpectedConditions.visibilityOfElementLocated(
+									By.xpath("//div[@class='ReactCollapse--content']/section/div")));
+							wait.until(ExpectedConditions.elementToBeClickable(
+									By.xpath("//div[@class='ReactCollapse--content']/section/div")));
+							descrption = driver
+									.findElement(By.xpath("//div[@class='ReactCollapse--content']/section/div"))
+									.getText().trim();
+						}
 
 						if (!descrption.equalsIgnoreCase(description)) {
 							cell1.setCellValue(descrption);
@@ -1107,6 +1130,11 @@ public class AllHomesPage {
 						propType = "Town house";
 					} else if (propType.contains("Land") || propType.contains("Other")) {
 						propType = "Others";
+					}
+					
+					if(prop_City.equalsIgnoreCase("MacGregor"))
+					{
+						prop_City ="Macgregor";
 					}
 
 					// Fetching the Property Status
