@@ -14,5 +14,6 @@ public class UpdateNewListing {
 		AllHomesPage allHomespage = new AllHomesPage(driver);
 		driver=allHomespage.updateNewListingInfo();
 		driver.quit();
+		allHomespage.updateCity();
 	}
 }

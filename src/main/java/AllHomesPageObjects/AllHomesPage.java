@@ -3,6 +3,7 @@ package AllHomesPageObjects;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,11 +19,13 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.support.ui.Wait;
 
 public class AllHomesPage {
 	static WebDriver driver;
@@ -296,9 +299,8 @@ public class AllHomesPage {
 								wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(prop_City)));
 								wait.until(ExpectedConditions.elementToBeClickable(By.xpath(prop_City)));
 								String propCity = driver.findElement(By.xpath(prop_City)).getText().trim();
-								if(propCity.equalsIgnoreCase("MacGregor"))
-								{
-									propCity ="Macgregor";
+								if (propCity.equalsIgnoreCase("MacGregor")) {
+									propCity = "Macgregor";
 								}
 								cell1 = row1.getCell(5);
 								if (cell1 != null) {
@@ -693,9 +695,8 @@ public class AllHomesPage {
 						wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(prop_City)));
 						wait.until(ExpectedConditions.elementToBeClickable(By.xpath(prop_City)));
 						String propCity = driver.findElement(By.xpath(prop_City)).getText().trim();
-						if(propCity.equalsIgnoreCase("MacGregor"))
-						{
-							propCity ="Macgregor";
+						if (propCity.equalsIgnoreCase("MacGregor")) {
+							propCity = "Macgregor";
 						}
 						cell1 = row1.getCell(5);
 						if (cell1 != null) {
@@ -1131,10 +1132,9 @@ public class AllHomesPage {
 					} else if (propType.contains("Land") || propType.contains("Other")) {
 						propType = "Others";
 					}
-					
-					if(prop_City.equalsIgnoreCase("MacGregor"))
-					{
-						prop_City ="Macgregor";
+
+					if (prop_City.equalsIgnoreCase("MacGregor")) {
+						prop_City = "Macgregor";
 					}
 
 					// Fetching the Property Status
@@ -1378,4 +1378,115 @@ public class AllHomesPage {
 		}
 		return driver;
 	}
+
+	@SuppressWarnings({ "resource", "unused", "unchecked", "rawtypes" })
+	public static void updateCity() {
+		try {
+			// Fetching the Input Excel
+			String homePath = System.getProperty("user.dir");
+			String filePath = homePath + "\\src\\main\\resources\\InputTestdata\\Listing details.xlsx";
+			FileInputStream file = new FileInputStream(new File(filePath));
+			ZipSecureFile.setMinInflateRatio(-1.0d);
+			XSSFWorkbook workbook = new XSSFWorkbook(file);
+			XSSFSheet sheet = workbook.getSheetAt(1);
+			XSSFRow row = sheet.getRow(0);
+			XSSFCell cell = row.getCell(0);
+
+			// Launching the Chrome Browser
+			System.setProperty("webdriver.chrome.driver", homePath + "\\Drivers\\chromedriver.exe");
+			driver = new ChromeDriver();
+			driver.manage().deleteAllCookies();
+			driver.manage().window().maximize();
+			driver.get("https://www.777homes.com.au/browse/");
+
+			for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
+				try {
+					Boolean value = false;
+					row = sheet.getRow(rowIndex);
+					String City = "";
+					if (row != null) {
+						// Checking the City Details
+						cell = row.getCell(5);
+						// Fetch the Details
+						if (cell != null) {
+							// Found column and there is value in the cell.
+							City = cell.getStringCellValue().trim();
+						} else {
+							City = "";
+						}
+						if (checkNumericCity(City)) {
+							String[] cityValue = City.split(" ");
+							FluentWait wait = new FluentWait<WebDriver>(driver).withTimeout(25, TimeUnit.SECONDS)
+									.pollingEvery(3, TimeUnit.SECONDS).ignoring(Exception.class);
+							wait.until(ExpectedConditions
+									.visibilityOfElementLocated(By.xpath("(//li[contains(@class,'vc_tta-tab')])[1]")));
+							List<WebElement> tabs = driver
+									.findElements(By.xpath("//li[contains(@class,'vc_tta-tab')]"));
+							String area = "";
+							for (int i = 0; i < tabs.size(); i++) {
+								tabs = driver.findElements(By.xpath("//li[contains(@class,'vc_tta-tab')]"));
+								tabs.get(i).click();
+								area = tabs.get(i).getText();
+								Thread.sleep(3000);
+								if (driver
+										.findElements(By.xpath("//span[text()='" + area
+												+ "']/following::a[contains(text(),'" + cityValue[0] + "')]"))
+										.size() > 0) {
+									WebElement element = driver.findElement(By.xpath("//span[text()='" + area
+											+ "']/following::a[contains(text(),'" + cityValue[0] + "')]"));
+									if (element.isDisplayed()) {
+										cell.setCellValue(area);
+										value = true;
+									}
+								}
+								if (value) {
+									break;
+								}
+							}
+						}
+
+						// Checking the Status of the Property and Update to Sale if status is 'New'
+						cell = row.getCell(4);
+						String status = "";
+						// Fetch the Details
+						if (cell != null) {
+							// Found column and there is value in the cell.
+							status = cell.getStringCellValue().trim();
+							if (status.equalsIgnoreCase("New")) {
+								cell.setCellValue("Sale");
+							}
+						}
+
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				// Updating the Excel Sheet with the changes
+				FileOutputStream out = new FileOutputStream(new File(filePath));
+				workbook.write(out);
+				out.close();
+			}
+			driver.quit();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static Boolean checkNumericCity(String cityValue) {
+		Boolean value = false;
+		try {
+			char[] chars = cityValue.toCharArray();
+			for (char c : chars) {
+				if (Character.isDigit(c)) {
+					value = true;
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return value;
+
+	}
+
 }
