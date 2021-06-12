@@ -697,4 +697,12 @@ public class AddNewPropertyPage {
 		}
 	}
 
+	
+	
+	
+	
+	
+	
+	
+	
 }
