@@ -12,7 +12,7 @@ public class UpdateProperty {
 
 	@Test
 	@SuppressWarnings("static-access")
-	public static void addNewProperty() throws IOException, InterruptedException {
+	public static void updateProperty() throws IOException, InterruptedException {
 		WebDriver driver = null;
 		Properties prop = CommonUtilities.ReadInputData.readPropertiesFile();
 		String Browser_Username = prop.getProperty("browser_username").trim();
