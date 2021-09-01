@@ -102,16 +102,23 @@ public class AllHomesPage {
 			driver.manage().deleteAllCookies();
 			driver.manage().window().maximize();
 			Set<String> keys = agenturls.keySet();
-
+			
+			
 			for (String st : keys) {
 				ArrayList<String> agentHomeUrl = new ArrayList<String>();
 				driver.get(agenturls.get(st));
 				String loginDetail = st;
 				FluentWait wait = new FluentWait<WebDriver>(driver).withTimeout(25, TimeUnit.SECONDS)
 						.pollingEvery(3, TimeUnit.SECONDS).ignoring(Exception.class);
-				wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(show_all)));
-				wait.until(ExpectedConditions.elementToBeClickable(By.xpath(show_all)));
-				driver.findElement(By.xpath(show_all)).click();
+				
+				
+				WebElement elementShowAll = driver.findElement(By.xpath(show_all));
+				if(isDisplayed(elementShowAll)) {
+					//wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(show_all)));
+					//wait.until(ExpectedConditions.elementToBeClickable(By.xpath(show_all)));
+					driver.findElement(By.xpath(show_all)).click();
+				}
+				
 				Thread.sleep(3000);
 				wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(listing_url)));
 				wait.until(ExpectedConditions.elementToBeClickable(By.xpath(listing_url)));
@@ -1488,5 +1495,15 @@ public class AllHomesPage {
 		return value;
 
 	}
+	
+	public static boolean isDisplayed(WebElement element) {
+        try {
+            if(element.isDisplayed())
+                return element.isDisplayed();
+            }catch (NoSuchElementException ex) {
+            return false;
+        }
+        return false;
+    }
 
 }
