@@ -52,6 +52,7 @@ public class AddNewPropertyPage {
 	public static String country = "//select[contains(@name,'property_address_country')]";
 	public static String contact = "//select[contains(@name,'property_contact_info')]";
 	public static String owner = "//select[contains(@name,'property_contact_owner')]";
+	public static String agency = "//select[contains(@name,'property_contact_agency')]";
 	public static String save_draft = "//input[@value='Save Draft']";
 
 	@SuppressWarnings("unchecked")
@@ -610,7 +611,7 @@ public class AddNewPropertyPage {
 									driver.findElement(By.xpath(contact)));
 						wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(contact)));
 						Select prop_contact = new Select(driver.findElement(By.xpath(contact)));
-						prop_contact.selectByVisibleText("Owner Info");
+						prop_contact.selectByVisibleText(Contact);
 
 						// Selecting the Owner details by fetching it from Input Excel
 						String Owner = "";
@@ -622,11 +623,23 @@ public class AddNewPropertyPage {
 								Owner = cell.getStringCellValue().trim();
 							}
 						}
-						if (Owner != null)
+						if (Owner != null && Contact.equalsIgnoreCase("Agency Info")) {
+							je.executeScript("arguments[0].scrollIntoView(true);", driver.findElement(By.xpath(agency)));
+						wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(agency)));
+						Select prop_owner = new Select(driver.findElement(By.xpath(agency)));
+						prop_owner.selectByVisibleText(Owner);
+						}
+						
+						else if(Owner != null && Contact.equalsIgnoreCase("Owner Info")){
 							je.executeScript("arguments[0].scrollIntoView(true);", driver.findElement(By.xpath(owner)));
-						wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(owner)));
-						Select prop_owner = new Select(driver.findElement(By.xpath(owner)));
-						prop_owner.selectByVisibleText("newdoorproperties");
+							wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(owner)));
+							Select prop_owner = new Select(driver.findElement(By.xpath(owner)));
+							prop_owner.selectByVisibleText(Owner);
+						}
+						else {
+							
+						}
+							
 
 						// Click on Save Draft Button
 						je.executeScript("arguments[0].scrollIntoView(true);", driver.findElement(By.xpath(title)));
